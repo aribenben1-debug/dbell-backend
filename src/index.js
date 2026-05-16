@@ -23,11 +23,23 @@ dotenv.config();
 const app = express();
 const httpServer = createServer(app);
 
-const io = new Server(httpServer, {
-  cors: { origin: process.env.CLIENT_URL || 'http://localhost:5173', credentials: true },
-});
+const allowedOrigins = [
+  'https://dbell-client.vercel.app',
+  'http://localhost:5173',
+  process.env.CLIENT_URL,
+].filter(Boolean);
 
-app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:5173', credentials: true }));
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) callback(null, true);
+    else callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true,
+};
+
+const io = new Server(httpServer, { cors: corsOptions });
+
+app.use(cors(corsOptions));
 
 // Stripe webhook needs raw body — must come before json middleware
 app.use('/api/payments/webhook', express.raw({ type: 'application/json' }));
