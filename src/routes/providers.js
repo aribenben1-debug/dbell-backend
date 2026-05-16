@@ -4,6 +4,17 @@ import { authenticate, requireRole } from '../middleware/auth.js';
 
 const router = Router();
 
+// Temporary debug endpoint
+router.get('/debug-count', async (req, res) => {
+  const total = await prisma.provider.count();
+  const approved = await prisma.provider.count({ where: { status: 'APPROVED' } });
+  const plumbers = await prisma.provider.count({
+    where: { status: 'APPROVED', trades: { some: { slug: 'plumber' } } },
+  });
+  const trades = await prisma.trade.findMany({ select: { slug: true } });
+  res.json({ total, approved, plumbers, trades: trades.map(t => t.slug) });
+});
+
 // Search available providers by trade + city
 router.get('/search', async (req, res) => {
   const { tradeSlug, city, date } = req.query;
