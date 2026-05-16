@@ -11,6 +11,7 @@ router.get('/search', async (req, res) => {
 
   const dayOfWeek = date ? new Date(date).getDay() : undefined;
 
+  console.log(`[search] tradeSlug=${tradeSlug} city=${city}`);
   // Fetch all approved providers for this trade (SQLite doesn't support mode:'insensitive')
   const all = await prisma.provider.findMany({
     where: {
@@ -39,6 +40,7 @@ router.get('/search', async (req, res) => {
   // so the user always sees results
   if (providers.length === 0) providers = all;
 
+  console.log(`[search] all=${all.length} returning=${providers.length}`);
   res.json(providers);
 });
 
