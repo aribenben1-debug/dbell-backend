@@ -63,6 +63,9 @@ app.use((err, req, res, next) => {
 initSocket(io);
 
 const PORT = process.env.PORT || 3001;
-httpServer.listen(PORT, () => console.log(`D-Bell server running on port ${PORT}`));
+httpServer.listen(PORT, () => {
+  console.log(`D-Bell server running on port ${PORT}`);
+  console.log(`DB: ${process.env.DATABASE_URL?.substring(0, 40)}...`);
+});
 
 export { io };
