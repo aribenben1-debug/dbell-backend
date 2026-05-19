@@ -141,10 +141,16 @@ router.get('/:id/slots', async (req, res) => {
   const [endH] = availability.endTime.split(':').map(Number);
   const bookedHours = new Set(existing.map((b) => b.scheduledTime));
 
+  // If booking is for today, block slots that have already passed (+ 1h buffer)
+  const now = new Date();
+  const isToday = new Date(date).toDateString() === now.toDateString();
+  const minHour = isToday ? now.getHours() + 1 : -1;
+
   const slots = [];
   for (let h = startH; h < endH; h++) {
     const time = `${String(h).padStart(2, '0')}:00`;
-    slots.push({ time, available: !bookedHours.has(time) });
+    const isPast = h < minHour;
+    slots.push({ time, available: !bookedHours.has(time) && !isPast });
   }
 
   res.json({ slots });
