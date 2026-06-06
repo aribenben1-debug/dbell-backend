@@ -32,6 +32,7 @@ const io = new Server(httpServer, {
   cors: { origin: allowedOrigins, credentials: true },
 });
 
+app.options('*', cors({ origin: allowedOrigins, credentials: true }));
 app.use(cors({ origin: allowedOrigins, credentials: true }));
 
 // Stripe webhook needs raw body — must come before json middleware

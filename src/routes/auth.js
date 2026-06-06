@@ -81,19 +81,24 @@ router.post('/register', async (req, res) => {
 });
 
 router.post('/login', async (req, res) => {
-  const { email, password } = req.body;
-  if (!email || !password) return res.status(400).json({ error: 'Email and password required' });
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) return res.status(400).json({ error: 'Email and password required' });
 
-  const user = await prisma.user.findUnique({
-    where: { email },
-    include: { provider: true },
-  });
-  if (!user) return res.status(401).json({ error: 'Invalid credentials' });
+    const user = await prisma.user.findUnique({
+      where: { email },
+      include: { provider: true },
+    });
+    if (!user) return res.status(401).json({ error: 'Invalid credentials' });
 
-  const valid = await bcrypt.compare(password, user.password);
-  if (!valid) return res.status(401).json({ error: 'Invalid credentials' });
+    const valid = await bcrypt.compare(password, user.password);
+    if (!valid) return res.status(401).json({ error: 'Invalid credentials' });
 
-  res.json({ user: safeUser(user), ...tokenPair(user) });
+    res.json({ user: safeUser(user), ...tokenPair(user) });
+  } catch (err) {
+    console.error('LOGIN ERROR:', err);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 router.post('/refresh', async (req, res) => {

@@ -8,6 +8,7 @@
     "dev": "nodemon src/index.js",
     "start": "node src/index.js",
     "build": "prisma generate",
+    "postinstall": "prisma generate",
     "start:prod": "prisma db push && node src/index.js",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
@@ -23,12 +24,12 @@
     "jsonwebtoken": "^9.0.2",
     "multer": "^2.1.1",
     "nodemailer": "^6.10.1",
+    "prisma": "^5.12.1",
     "socket.io": "^4.7.5",
     "stripe": "^15.5.0",
     "zod": "^3.23.4"
   },
   "devDependencies": {
-    "nodemon": "^3.1.0",
-    "prisma": "^5.12.1"
+    "nodemon": "^3.1.0"
   }
 }
